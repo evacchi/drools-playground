@@ -1,0 +1,7 @@
+<kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://www.drools.org/xsd/kmodule">
+  <kbase name="KB" default="true" eventProcessingMode="cloud" equalsBehavior="equality" declarativeAgenda="enabled" packages="io.github.evacchi">
+    <ksession name="KStateful" type="stateful" default="true"/>
+    <ksession name="KStateless" type="stateless" default="false" beliefSystem="jtms"/>
+  </kbase>
+</kmodule>
