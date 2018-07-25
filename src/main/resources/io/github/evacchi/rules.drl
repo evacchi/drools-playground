@@ -15,61 +15,35 @@
 
 package io.evacchi.github;
 
-import io.github.evacchi.Location;
+import io.github.evacchi.*;
 
 dialect  "mvel"
 
-query isContainedIn( String x, String y )
-  Location( x, y; )
-  or
-  ( Location( z, y; ) and isContainedIn( x, z; ) )
+// my_last(X,[X]).
+// my_last(X,[_|L]) :- my_last(X,L).
+rule "last0"
+when
+   $q: Query($L: query)
+   $l : Last(list.tail == null)
+then
+    retract($l)
+    insert(new Result(new Last($l.getList().getHead(), $q.getQuery().getList())))
+    System.out.println("last is " + $l.getList().getHead());
 end
 
-rule "go" salience 10
+rule "last1"
 when
-    $s : String(  )
+    $matched: Last($value: value, $list: list, list.tail != null)
 then
-    System.out.println( $s );
+    last = new Last($value, $list.getTail());
+    retract($matched)
+    insert(last)
+    System.out.println("insert: "+last);
 end
 
-
-rule "go1"
+rule "query_last"
 when
-    String( this == "go1" )
-    isContainedIn("Office", "House"; )
+    Query($L: query)
 then
-    System.out.println( "office is in the house" );
-end
-
-rule "go2"
-when
-    String( this == "go2" )
-    isContainedIn("Draw", "House"; )
-then
-    System.out.println( "Draw in the House" );
-end
-
-rule "go3"
-when
-    String( this == "go3" )
-    isContainedIn("Key", "Office"; )
-then
-    System.out.println( "Key in the Office" );
-end
-
-
-rule "go4"
-when
-    String( this == "go4" )
-    isContainedIn(thing, "Office"; )
-then
-    System.out.println( "thing " + thing + " is in the Office" );
-end
-
-rule "go5"
-when
-    String( this == "go5" )
-    isContainedIn(thing, location; )
-then
-    System.out.println( "thing " + thing + " is in " + location );
+    insert($L)
 end
