@@ -1,0 +1,55 @@
+package io.github.evacchi
+global java.util.List list
+import io.github.evacchi.Rules2.*
+dialect "mvel"
+query man( String name ) 
+   Man( name := name ) 
+end
+query woman( String name ) 
+   Woman( name := name ) 
+end
+query parent( String parent, String child ) 
+   Parent( parent := parent, child := child ) 
+end
+query father( String father, String child ) 
+   ?man( father; ) 
+   ?parent( father, child; ) 
+end
+query mother( String mother, String child ) 
+   ?woman( mother; ) 
+   ?parent( mother, child; ) 
+end
+query son( String son, String parent ) 
+   ?man( son; ) 
+   ?parent( parent, son; ) 
+end
+query daughter( String daughter, String parent ) 
+   ?woman( daughter; ) 
+   ?parent( parent, daughter; ) 
+end
+query siblings( String c1, String c2 ) 
+   ?parent( $p, c1; ) 
+   ?parent( $p, c2; ) 
+   eval( !c1.equals( c2 ) )
+end
+query fullSiblings( String c1, String c2 )
+   ?parent( $p1, c1; ) ?parent( $p1, c2; )
+   ?parent( $p2, c1; ) ?parent( $p2, c2; )
+   eval( !c1.equals( c2 ) && !$p1.equals( $p2 )  )
+end
+query fullSiblings2( String c1, String c2 )
+   ?father( $p1, c1; ) ?father( $p1, c2; )
+   ?mother( $p2, c1; ) ?mother( $p2, c2; )
+   eval( !c1.equals( c2 ) )
+end
+query uncle( String uncle, String n )
+   ?man( uncle; ) ?siblings( uncle, parent; )
+   ?parent( parent, n; )
+ end
+query aunt( String aunt, String n )
+   ?woman( aunt; ) ?siblings( aunt, parent; )
+   ?parent( parent, n; )
+ end
+query grantParents( String gp, String gc )
+   ?parent( gp, p; ) ?parent( p, gc; )
+end

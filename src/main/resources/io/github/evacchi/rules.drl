@@ -19,31 +19,39 @@ import io.github.evacchi.*;
 
 dialect  "mvel"
 
+
+query isLast( Object value, List list )
+  List( value, null; )
+  or
+  ( List( head, tail; ) and isLast( value, tail; ) )
+end
+
+
 // my_last(X,[X]).
 // my_last(X,[_|L]) :- my_last(X,L).
-rule "last0"
-when
-   $q: Query($L: query)
-   $l : Last(list.tail == null)
-then
-    retract($l)
-    insert(new Result(new Last($l.getList().getHead(), $q.getQuery().getList())))
-    System.out.println("last is " + $l.getList().getHead());
-end
-
-rule "last1"
-when
-    $matched: Last($value: value, $list: list, list.tail != null)
-then
-    last = new Last($value, $list.getTail());
-    retract($matched)
-    insert(last)
-    System.out.println("insert: "+last);
-end
-
-rule "query_last"
-when
-    Query($L: query)
-then
-    insert($L)
-end
+//rule "last0"
+//when
+//   $q: Query($L: query)
+//   $l : Last(list.tail == null)
+//then
+//    retract($l)
+//    insert(new Result(new Last($l.getList().getHead(), $q.getQuery().getList())))
+//    System.out.println("last is " + $l.getList().getHead());
+//end
+//
+//rule "last1"
+//when
+//    $matched: Last($value: value, $list: list, list.tail != null)
+//then
+//    last = new Last($value, $list.getTail());
+//    retract($matched)
+//    insert(last)
+//    System.out.println("insert: "+last);
+//end
+//
+//rule "query_last"
+//when
+//    Query($L: query)
+//then
+//    insert($L)
+//end

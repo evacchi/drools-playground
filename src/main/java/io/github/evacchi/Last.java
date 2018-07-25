@@ -4,16 +4,16 @@ import org.kie.api.definition.type.Position;
 
 public class Last {
     @Position(0)
-    private final Object value;
+    private final Value value;
     @Position(1)
     private final List list;
 
     public Last(Object value, List list) {
-        this.value = value;
+        this.value = new Value(value);
         this.list = list;
     }
 
-    public Object getValue() {
+    public Value getValue() {
         return value;
     }
 
