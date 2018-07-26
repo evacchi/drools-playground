@@ -7,7 +7,7 @@ import org.kie.api.runtime.rule.Variable;
 
 public class Main {
 
-    static List list = new List(1, new List(2, new List(3, List.Nil)));
+    static List list = new List(10, new List(20, new List(30, List.Nil)));
 
     public void execute() {
         KieContainer kc = KieServices.Factory.get().getKieClasspathContainer();
@@ -16,6 +16,9 @@ public class Main {
                 .forEach(q -> System.out.println(q.get("x")));
 
         kieSession.getQueryResults("last_but_one", Variable.v, list)
+                .forEach(q -> System.out.println(q.get("x")));
+
+        kieSession.getQueryResults("element_at", Variable.v, list, 2)
                 .forEach(q -> System.out.println(q.get("x")));
     }
 
