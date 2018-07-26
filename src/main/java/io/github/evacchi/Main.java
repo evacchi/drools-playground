@@ -11,11 +11,11 @@ public class Main {
     public void execute() {
         KieContainer kc = KieServices.Factory.get().getKieClasspathContainer();
         KieSession kieSession = kc.newKieSession( "KStateful");
-//        kieSession.insert(list);
+        kieSession.insert(list);
 //        kieSession.insert(new Query(new Last(null, list)));
 //        kieSession.fireAllRules();
 //        kieSession.getObjects(new ClassObjectFilter(Result.class)).forEach(System.out::println);
-        kieSession.getQueryResults("isLast", 3, list).forEach(q -> System.out.println(q));
+        kieSession.getQueryResults("last", 3, list).forEach(q -> System.out.println(q));
     }
 
     public static void main(String[] args) {

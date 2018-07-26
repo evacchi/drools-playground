@@ -19,16 +19,29 @@ import io.github.evacchi.*;
 
 dialect  "mvel"
 
-
-query isLast( Object value, List list )
-  List( value, null; )
-  or
-  ( List( head, tail; ) and isLast( value, tail; ) )
-end
-
+//query list(Object head, List tail)
+//    List( head := head, tail := tail )
+//end
 
 // my_last(X,[X]).
 // my_last(X,[_|L]) :- my_last(X,L).
+query last( Object value )
+//  // my_last(X,[X]).
+//  ?list( value, null; )
+    List( head := value, tail := null )
+  or
+//  // my_last(X,[_|L]) :- my_last(X,L).
+   ?last( value; )
+end
+
+rule printList
+when
+    $l: List()
+then
+    System.out.println($l);
+end
+
+
 //rule "last0"
 //when
 //   $q: Query($L: query)
