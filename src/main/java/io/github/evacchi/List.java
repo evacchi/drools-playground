@@ -6,9 +6,9 @@ import org.kie.api.definition.type.Position;
 
 public class List {
 
-    public static class Empty extends List {
+    public static class Nil extends List {
 
-        private Empty() {
+        private Nil() {
             super(null, null);
         }
 
@@ -18,7 +18,7 @@ public class List {
         }
     }
 
-    public static List Empty = new List.Empty();
+    public static List Nil = new Nil();
 
     @Position(0)
     private final Object head;

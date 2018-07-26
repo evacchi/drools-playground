@@ -19,10 +19,27 @@ import io.github.evacchi.*;
 
 dialect  "mvel"
 
+//my_last(X,[X]).
+//my_last(X,[H|T]) :- my_last(X,T).
 query last(Object x, List l)
    ( x := Object() from l.head and
-     y := List.Empty() from l.tail )
+          List.Nil() from l.tail )
    or
   ( tail := List() from l.tail and
     ?last(x, tail;) )
+end
+
+
+//last_but_one(X,[X,_]).
+//last_but_one(X,[_,Y|Ys]) :- last_but_one(X,[Y|Ys]).
+query last_but_one(Object x, List l)
+   (  x  := Object()   from l.head  and
+      lt := List()     from l.tail  and
+            Object()   from lt.head and
+            List.Nil() from lt.tail )
+   or
+  (  t := List()   from l.tail and
+          Object() from t.head and
+          List()   from t.tail and
+    ?last_but_one(x, t;) )
 end
