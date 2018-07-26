@@ -19,52 +19,10 @@ import io.github.evacchi.*;
 
 dialect  "mvel"
 
-//query list(Object head, List tail)
-//    List( head := head, tail := tail )
-//end
-
-// my_last(X,[X]).
-// my_last(X,[_|L]) :- my_last(X,L).
-query last( Object value )
-//  // my_last(X,[X]).
-//  ?list( value, null; )
-    List( head := value, tail := null )
-  or
-//  // my_last(X,[_|L]) :- my_last(X,L).
-   ?last( value; )
+query last(Object x, List l)
+   ( x := Object() from l.head and
+     y := List.Empty() from l.tail )
+   or
+  ( tail := List() from l.tail and
+    ?last(x, tail;) )
 end
-
-rule printList
-when
-    $l: List()
-then
-    System.out.println($l);
-end
-
-
-//rule "last0"
-//when
-//   $q: Query($L: query)
-//   $l : Last(list.tail == null)
-//then
-//    retract($l)
-//    insert(new Result(new Last($l.getList().getHead(), $q.getQuery().getList())))
-//    System.out.println("last is " + $l.getList().getHead());
-//end
-//
-//rule "last1"
-//when
-//    $matched: Last($value: value, $list: list, list.tail != null)
-//then
-//    last = new Last($value, $list.getTail());
-//    retract($matched)
-//    insert(last)
-//    System.out.println("insert: "+last);
-//end
-//
-//rule "query_last"
-//when
-//    Query($L: query)
-//then
-//    insert($L)
-//end

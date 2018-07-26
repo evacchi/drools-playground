@@ -6,6 +6,20 @@ import org.kie.api.definition.type.Position;
 
 public class List {
 
+    public static class Empty extends List {
+
+        private Empty() {
+            super(null, null);
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+    }
+
+    public static List Empty = new List.Empty();
+
     @Position(0)
     private final Object head;
     @Position(1)
@@ -24,6 +38,8 @@ public class List {
         return tail;
     }
 
+    public boolean isEmpty() { return false; }
+
     @Override
     public String toString() {
         return "[" + head + (tail == null ? "" : tail.toString()) + "]";
@@ -38,4 +54,5 @@ public class List {
         }
         return false;
     }
+
 }
