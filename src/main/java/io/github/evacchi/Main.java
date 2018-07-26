@@ -20,6 +20,10 @@ public class Main {
 
         kieSession.getQueryResults("element_at", Variable.v, list, 2)
                 .forEach(q -> System.out.println(q.get("x")));
+
+        kieSession.getQueryResults("length", list, Variable.v)
+                .forEach(q -> System.out.println(q.get("len")));
+
     }
 
     public static void main(String[] args) {

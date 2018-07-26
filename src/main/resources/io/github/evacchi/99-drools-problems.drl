@@ -40,3 +40,14 @@ query element_at(Object x, List l, int pos)
     eval ( pos > 1 )         and
     ?element_at(x, tail, pos - 1 ;) )
 end
+
+// my_length([],0).
+// my_length([_|L],N) :- my_length(L,N1), N is N1 + 1.
+query length(List l, int len)
+   ( l := List.Nil() from l and
+    len := Integer() from 0)
+   or
+  ( tail := List() from l.tail and
+    ?length(tail, len1;)       and
+    len := Integer() from Integer.valueOf(len1 + 1) )
+end
