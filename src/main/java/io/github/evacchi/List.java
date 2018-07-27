@@ -1,5 +1,6 @@
 package io.github.evacchi;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import org.kie.api.definition.type.Position;
@@ -12,9 +13,29 @@ public class List {
             super(null, null);
         }
 
+//        @Override
+//        public Object getHead() {
+//            throw new NoSuchElementException("Empty list has no head");
+//        }
+//
+//        @Override
+//        public List getTail() {
+//            throw new NoSuchElementException("Empty list has no tail");
+//        }
+
         @Override
         public boolean isEmpty() {
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return "[]";
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof Nil;
         }
     }
 

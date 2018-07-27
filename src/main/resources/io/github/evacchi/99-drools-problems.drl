@@ -41,13 +41,48 @@ query element_at(Object x, List l, int pos)
     ?element_at(x, tail, pos - 1 ;) )
 end
 
+
 // my_length([],0).
 // my_length([_|L],N) :- my_length(L,N1), N is N1 + 1.
 query length(List l, int len)
-   ( l := List.Nil() from l and
-    len := Integer() from 0)
+   ( ?nil(l;) and
+     ?is(len, 0;) )
    or
-  ( tail := List() from l.tail and
-    ?length(tail, len1;)       and
-    len := Integer() from Integer.valueOf(len1 + 1) )
+  ( ?cons(l, head, tail;) and
+    ?length(tail, len1;) and
+    ?sum(len, len1, 1;) )
+end
+
+
+// list aliases
+query nil(List l)
+    l := List.Nil() from List.Nil
+end
+
+query tail(List l)
+    l := List() from l or
+    ?nil(l;)
+end
+
+query atom(Object any)
+    any := Object() from any or
+    any := Object() from new Object()
+end
+
+query cons(List l, Object h, List t)
+        List(h:=head, t:=tail) from l
+        or (
+            ?atom(h;) and
+            ?tail(t;) and
+            l := List() from new List(h, t)
+        )
+end
+
+// number aliases
+query is(Integer assignee, Integer value)
+    assignee := Integer() from value
+end
+
+query sum(Integer res, Integer left, Integer right)
+    res := Integer() from Integer.valueOf(left + right)
 end
