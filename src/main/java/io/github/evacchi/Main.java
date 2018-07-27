@@ -18,17 +18,17 @@ public class Main {
         KieContainer kc = KieServices.Factory.get().getKieClasspathContainer();
         KieSession kieSession = kc.newKieSession("KStateful");
         kieSession.getQueryResults("last", Variable.v, list)
-                .forEach(q -> System.out.printf("last is %s\n", q.get("x")));
+                .forEach(q -> System.out.println("last is " + q.get("x")));
 
         kieSession.getQueryResults("last_but_one", Variable.v, list)
-                .forEach(q -> System.out.println(q.get("x")));
+                .forEach(q -> System.out.println("last but one is " + q.get("x")));
 
         kieSession.getQueryResults("element_at", Variable.v, list, 2)
-                .forEach(q -> System.out.println(q.get("x")));
+                .forEach(q -> System.out.println("element at " + q.get("x")));
 
 //        kieSession.getQueryResults("length", Variable.v, 1)
         kieSession.getQueryResults("length", list, Variable.v)
-                .forEach(q -> System.out.println(q.get("len")));
+                .forEach(q -> System.out.println("length " + q.get("len")));
 
         kieSession.getQueryResults("cons", Variable.v, Variable.v, Variable.v)
                 .forEach(q -> {

@@ -17,27 +17,27 @@ end
 //last_but_one(X,[X,_]).
 //last_but_one(X,[_,Y|Ys]) :- last_but_one(X,[Y|Ys]).
 query last_but_one(Object x, List l)
-   (  x  := Object()   from l.head  and
-      lt := List()     from l.tail  and
-            Object()   from lt.head and
-            List.Nil() from lt.tail )
-   or
-   (  t := List()   from l.tail and
-           Object() from t.head and
-           List()   from t.tail and
-    ?last_but_one(x, t;) )
+   (
+     ?cons(l, x, t; ) and
+     ?cons(t, th, tt; ) and
+     ?nil(tt;)
+   ) or (
+    ?cons(l, h_, t1; ) and
+    ?cons(t1, th_, tt_; ) and
+    ?last_but_one(x, t1;)
+   )
 end
 
 //element_at(X,[X|_],1).
 //element_at(X,[_|L],K) :- K > 1, K1 is K - 1, element_at(X,L,K1).
 query element_at(Object x, List l, int pos)
-   ( x := Object() from l.head and
-          List()   from l.tail and
-          eval ( pos == 1) )
+   ( ?cons(l, x, _t; ) and
+     ?is( pos , 1; ) )
    or
-  ( tail := List() from l.tail and
-    eval ( pos > 1 )         and
-    ?element_at(x, tail, pos - 1 ;) )
+  ( ?cons(l, h_, tail; ) and
+    eval ( pos > 1 )     and
+    ?is(pos1, pos - 1 ; )   and
+    ?element_at(x, tail, pos1;) )
 end
 
 
