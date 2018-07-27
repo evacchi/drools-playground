@@ -7,10 +7,9 @@ dialect  "mvel"
 //my_last(X,[X]).
 //my_last(X,[H|T]) :- my_last(X,T).
 query last(Object x, List l)
-   ( x := Object() from l.head and
-          List.Nil() from l.tail )
+   ( ?cons(l, x, List.Nil;) )
    or
-  ( tail := List() from l.tail and
+  ( ?cons(l, head, tail;) and
     ?last(x, tail;) )
 end
 
@@ -65,7 +64,7 @@ query tail(List l)
 end
 
 query atom(Object any)
-    any := Object() from any or
+    Object() from any or
     any := Object() from new Object()
 end
 
