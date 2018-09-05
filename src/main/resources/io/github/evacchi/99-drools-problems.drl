@@ -59,7 +59,7 @@ query nil(List l)
 end
 
 query tail(List l)
-    l := List() from l or
+    List() from l or
     ?nil(l;)
 end
 
@@ -83,5 +83,5 @@ query is(Integer assignee, Integer value)
 end
 
 query sum(Integer res, Integer left, Integer right)
-    res := Integer() from Integer.valueOf(left + right)
+    res := Integer() from ((Integer)(left + right))
 end
