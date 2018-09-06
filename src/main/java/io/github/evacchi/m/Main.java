@@ -8,6 +8,7 @@ public class Main {
         PersonTerm paul = new PersonTerm();
         paul.setName("Paul");
         paul.setAge(50);
+        paul.$sentence().bind(paul);
 
         PersonTerm X = new PersonTerm();
         PersonMeta m = X.$meta();
@@ -17,25 +18,49 @@ public class Main {
         terms[m.index.age] = m.variable();
         sentence.bind(X);
 
-        SubstitutionSet r = unify(paul.$sentence(), X.$sentence(), new SubstitutionSet());
+        SubstitutionSet s = unify(paul.$sentence(), X.$sentence(), new SubstitutionSet());
+        Term r = replaceVariables(X.$sentence(), s);
+
+        System.out.println(r);
     }
 
     private static SubstitutionSet unify(Term x, Term y, SubstitutionSet s) {
-        if (x instanceof Term.Variable) return unify((Term.Variable) x, y, s);
-        if (x instanceof Term.Atom) return unify((Term.Atom) x, y, s);
-        if (x instanceof Term.Sentence) return unify((Term.Sentence) x, y, s);
+        if (x instanceof Term.Variable) return unifyVariable((Term.Variable) x, y, s);
+        if (x instanceof Term.Atom) return unifyAtom((Term.Atom) x, y, s);
+        if (x instanceof Term.Sentence) return unifySentence((Term.Sentence) x, y, s);
+        throw new IllegalArgumentException();
     }
-    private static SubstitutionSet unify(Term.Variable x, Term y, SubstitutionSet s) {
+    private static SubstitutionSet unifyVariable(Term.Variable x, Term y, SubstitutionSet s) {
         if (x == y) return s;
         if (s.isBound(x)) unify(s.get(x), y, s);
         return new SubstitutionSet(s).put(x, y);
     }
-    private static SubstitutionSet unify(Term.Atom x, Term y, SubstitutionSet s) {
+    private static SubstitutionSet unifyAtom(Term.Atom x, Term y, SubstitutionSet s) {
         if (x == y) return new SubstitutionSet(s);
         if (y instanceof Term.Variable) unify(y, x, s);
         return null;
     }
-    private static SubstitutionSet unify(Term.Sentence x, Term y, SubstitutionSet s) {
+    private static SubstitutionSet unifySentence(Term.Sentence x, Term y, SubstitutionSet s) {
+        if (y instanceof Term.Sentence) {
+            Term.Sentence ss = (Term.Sentence) y;
+            // cannot unify when arity differs
+            if (x.terms().length != ss.terms().length) {
+                return null;
+            }
+
+            SubstitutionSet sNew = new SubstitutionSet(s);
+            for (int i = 0; i < x.terms().length; i++) {
+                sNew = unify(x.terms()[i], ss.terms()[i], sNew);
+                if (sNew == null) {
+                    return null;
+                }
+            }
+            return sNew;
+        }
+
+        if (y instanceof Term.Variable) {
+            return unify(x, y, s);
+        }
 
         return null;
     }
@@ -44,11 +69,26 @@ public class Main {
 
     static Term replaceVariables(Term t, SubstitutionSet s) {
         if (t instanceof Term.Variable) return replaceVariables((Term.Variable) t, s);
+        if (t instanceof Term.Atom)     return replaceVariables((Term.Atom) t, s);
+        if (t instanceof Term.Sentence) return replaceVariables((Term.Sentence) t, s);
+        throw new IllegalArgumentException();
     }
 
     static Term replaceVariables(Term.Variable t, SubstitutionSet s) {
         if (s.isBound(t)) return replaceVariables(s.get(t), s);
         else return t;
+    }
+
+    static Term replaceVariables(Term.Atom t, SubstitutionSet s) {
+        return t;
+    }
+
+    static Term replaceVariables(Term.Sentence s, SubstitutionSet ss) {
+        Term[] ts = s.terms();
+        for (int i = 0; i < ts.length; i++) {
+            ts[i] = replaceVariables(ts[i], ss);
+        }
+        return s;
     }
 }
 

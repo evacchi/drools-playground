@@ -107,7 +107,7 @@ final class PersonTerm extends Person implements Term.Meta {
     {
         PersonMeta.Sentence sentence =
                 $meta.sentence($meta.atom(), $meta.atom());
-        sentence.bind(this);
+//        sentence.bind(this);
         this.$sentence = sentence;
     }
 
