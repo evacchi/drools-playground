@@ -21,8 +21,7 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
     public Atom atom(Term.Atom orig) {
         Atom o = (Atom) orig;
         Atom a = new Atom();
-
-        a.sentenceIndex = o.sentenceIndex;
+        a.index = o.index;
         a.parent = o.parent;
         return a;
     }
@@ -30,6 +29,15 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
     @Override
     public Variable variable() {
         return new Variable();
+    }
+
+    @Override
+    public Atom atom(Term.Variable orig) {
+        Variable o = (Variable) orig;
+        Atom a = new Atom();
+        a.index = o.index;
+        a.parent = o.parent;
+        return a;
     }
 
     @Override
@@ -52,14 +60,33 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
         public static final int age = 2;
     }
 
-    final static class Atom implements Term.Atom {
-
-        int sentenceIndex = -1;
+    abstract static class AbstractTerm implements Term {
+        int index = -1;
         PersonTerm parent;
 
         @Override
+        public void bind(Object value) {
+            this.parent = (PersonTerm) value;
+        }
+
+        @Override
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public int getIndex() {
+            return this.index;
+        }
+
+
+    }
+
+    final static class Atom extends AbstractTerm implements Term.Atom {
+
+        @Override
         public void setValue(Object value) {
-            switch (sentenceIndex) {
+            switch (index) {
                 case Index.$predicate:
                     if (parent.getClass() != value) {
                         throw new IllegalArgumentException();
@@ -72,13 +99,13 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
                     parent.setAge((int) value);
                     return;
                 default:
-                    throw new ArrayIndexOutOfBoundsException(sentenceIndex);
+                    throw new ArrayIndexOutOfBoundsException(index);
             }
         }
 
         @Override
         public Object getValue() {
-            switch (sentenceIndex) {
+            switch (index) {
                 case Index.$predicate:
                     return parent.getClass();
                 case Index.name:
@@ -86,13 +113,8 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
                 case Index.age:
                     return parent.getAge();
                 default:
-                    throw new ArrayIndexOutOfBoundsException(sentenceIndex);
+                    throw new ArrayIndexOutOfBoundsException(index);
             }
-        }
-
-        @Override
-        public void bind(Object value) {
-            this.parent = (PersonTerm) value;
         }
 
         @Override
@@ -107,15 +129,10 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
         }
     }
 
-    final static class Variable implements Term.Variable {
-
-        @Override
-        public void bind(Object value) {
-
-        }
+    final static class Variable extends AbstractTerm implements Term.Variable {
     }
 
-    final static class Sentence implements Term.Sentence {
+    final static class Sentence extends AbstractTerm implements Term.Sentence {
         private final Term[] terms;
         PersonTerm parent;
 
@@ -150,9 +167,7 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
         public PersonMeta.Sentence term(int i, Term t) {
             terms[i] = t;
             t.bind(parent);
-            if (t instanceof PersonMeta.Atom) {
-                ((PersonMeta.Atom) t).sentenceIndex = i;
-            }
+            t.setIndex(i);
             return this;
         }
 
@@ -167,10 +182,7 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
             tt.$sentence = this;
             for (int i = 0; i < terms.length; i++) {
                 Term t = terms[i];
-                if (t instanceof PersonMeta.Atom) {
-                    ((PersonMeta.Atom) t).sentenceIndex = i;
-                }
-
+                t.setIndex(i);
                 t.bind(o);
             }
         }

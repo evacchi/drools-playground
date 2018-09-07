@@ -10,28 +10,26 @@ public class Main {
 
         PersonTerm paul = new PersonTerm();
         paul.setName("Paul");
-        paul.setAge(50);
+        paul.$sentence().terms(
+                m.atom(),
+                m.variable()
+        );
 
         PersonTerm X = new PersonTerm();
-        X.setAge(510);
+        X.setAge(50);
         X.$sentence().terms(
                 m.variable(),
                 m.atom());
 
-        Unification unification = new Unification(X, m);
-        unification.query(paul.$sentence(), X.$sentence())
-                .ifPresentOrElse(
-                        System.out::println,
-                        () -> System.out.println("False"));
+        Unification unification = new Unification(m, paul, X);
+        unification.unify();
+
+        System.out.println(paul);
+        System.out.println(paul.$sentence());
 
         System.out.println(X);
         System.out.println(X.$sentence());
 
-        Term.Atom atom = (Term.Atom) X.$sentence().term(1);
-        atom.setValue("John");
-
-        System.out.println(X);
-        System.out.println(X.$sentence());
     }
 
 

@@ -3,6 +3,8 @@ package io.github.evacchi.m;
 interface Term {
 
     void bind(Object value);
+    void setIndex(int index);
+    int getIndex();
 
     interface Atom extends Term, Cloneable {
         void setValue(Object value);
@@ -24,6 +26,8 @@ interface Term {
         A atom();
 
         A atom(Term.Atom orig);
+
+        A atom(Term.Variable orig);
 
         V variable();
 

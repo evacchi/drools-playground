@@ -1,91 +1,89 @@
 package io.github.evacchi.m;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
 public class Unification {
 
-    private final Object goal;
     private final Term.Meta<?, ?, ?> meta;
+    private Term.ObjectTerm t1;
+    private Term.ObjectTerm t2;
 
-    public Unification(Object goal, Term.Meta<?, ?, ?> m) {
-        this.goal = goal;
+    public Unification(Term.Meta<?, ?, ?> m, Term.ObjectTerm t1, Term.ObjectTerm t2) {
         meta = m;
+        this.t1 = t1;
+        this.t2 = t2;
     }
 
-    public Optional<Term> query(Term.Sentence k, Term.Sentence goal) {
-        return Optional.ofNullable(unify(k, goal, new SubstitutionSet()))
-                .map(s -> replaceVariables(goal, s));
-    }
+    public void unify() {
+        ArrayList<Term> leftList = new ArrayList<>();
+        ArrayList<Term> rightList = new ArrayList<>();
 
-    private SubstitutionSet unify(Term t1, Term t2, SubstitutionSet s) {
-        if (t1 instanceof Term.Variable) return unifyVariable((Term.Variable) t1, t2, s);
-        if (t1 instanceof Term.Atom) return unifyAtom((Term.Atom) t1, t2, s);
-        if (t1 instanceof Term.Sentence) return unifySentence((Term.Sentence) t1, t2, s);
-        throw new IllegalArgumentException();
-    }
-    private SubstitutionSet unifyVariable(Term.Variable v, Term t, SubstitutionSet s) {
-        if (v.equals(t)) return s;
-        if (s.isBound(v)) unify(s.get(v), t, s);
-        return //new SubstitutionSet(s)
-                s.put(v, t);
-    }
-    private SubstitutionSet unifyAtom(Term.Atom a, Term t, SubstitutionSet s) {
-        if (a.equals(t)) return s;//new SubstitutionSet(s);
-        if (t instanceof Term.Variable) return unify(t, a, s);
-        return null;
-    }
-    private SubstitutionSet unifySentence(Term.Sentence s1, Term t, SubstitutionSet s) {
-        if (t instanceof Term.Sentence) {
-            Term.Sentence s2 = (Term.Sentence) t;
-            // cannot unify when arity differs
-            if (s1.size() != s2.size()) {
-                return null;
-            }
+        Term.Sentence left = t1.$sentence();
+        Term.Sentence right = t2.$sentence();
 
-            SubstitutionSet sNew = s;//new SubstitutionSet(s);
-            for (int i = 0; i < s1.size(); i++) {
-                sNew = unify(s1.term(i), s2.term(i), sNew);
-                if (sNew == null) {
-                    return null;
-                }
-            }
-            return sNew;
+        if (left.size() != right.size()) {
+            return;
         }
 
-        if (t instanceof Term.Variable) {
-            return unify(s1, t, s);
+        linearizeSentence(left, leftList);
+        linearizeSentence(right, rightList);
+
+        if (leftList.size() != rightList.size()) {
+            return;
         }
 
-        return null;
-    }
-
-
-
-    Term replaceVariables(Term t, SubstitutionSet s) {
-        if (t instanceof Term.Variable) return replaceVariables((Term.Variable) t, s);
-        if (t instanceof Term.Atom)     return replaceVariables((Term.Atom) t, s);
-        if (t instanceof Term.Sentence) return replaceVariables((Term.Sentence) t, s);
-        throw new IllegalArgumentException();
-    }
-
-    Term replaceVariables(Term.Variable v, SubstitutionSet s) {
-        if (s.isBound(v)) return replaceVariables(s.get(v), s);
-        else return v;
-    }
-
-    Term replaceVariables(Term.Atom a, SubstitutionSet s) {
-        Term.Atom a2 = meta.atom(a);
-        a2.bind(goal);
-        a2.setValue(a.getValue());
-        return a2;
-    }
-
-    Term replaceVariables(Term.Sentence s, SubstitutionSet ss) {
-        for (int i = 0; i < s.size(); i++) {
-            s.term(i, replaceVariables(s.term(i), ss));
+        for (int i = 0; i < leftList.size(); i++) {
+            _unify(i, leftList, rightList);
         }
-        return s;
+
+
+        System.out.println(leftList);
+        System.out.println(rightList);
+
+        return;
+    }
+
+    private void _unify(int i, ArrayList<Term> leftList, ArrayList<Term> rightList) {
+        Term lt = leftList.get(i), rt = rightList.get(i);
+        if (lt instanceof Term.Atom && rt instanceof Term.Atom) {
+            if (!lt.equals(rt)) throw new IllegalArgumentException();
+        } else if (lt instanceof Term.Atom && rt instanceof Term.Variable) {
+            copyAtom(rightList, i, (Term.Atom) lt, t1);
+        } else if (lt instanceof Term.Variable && rt instanceof Term.Atom) {
+            copyAtom(leftList, i, (Term.Atom) rt, t2);
+        } else if (lt instanceof Term.Variable && rt instanceof Term.Variable) {
+            Term.Atom a1 = meta.atom((Term.Variable) lt);
+            a1.bind(t1);
+            leftList.set(i, a1);
+            Term.Atom a2 = meta.atom((Term.Variable) rt);
+            a2.bind(t2);
+            rightList.set(i, a2);
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+    }
+
+
+    private void copyAtom(ArrayList<Term> terms, int i, Term.Atom orig, Object object) {
+        Term.Atom ra = meta.atom(orig);
+        ra.bind(object);
+        ra.setValue(orig.getValue());
+        terms.set(i, ra);
+    }
+
+    private void linearizeSentence(Term.Sentence sentence, ArrayList<Term> acc) {
+        for (Term term : sentence.terms()) {
+            linearizeTerm(term, acc);
+        }
+    }
+
+    private void linearizeTerm(Term term, ArrayList<Term> acc) {
+        if (term instanceof Term.Atom) acc.add(term);
+        if (term instanceof Term.Variable) acc.add(term);
+        if (term instanceof Term.Sentence) linearizeSentence((Term.Sentence)term, acc);
     }
 }
 
