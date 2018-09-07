@@ -8,22 +8,42 @@ public abstract class Person {
     protected int age;
 }
 
-final class PersonMeta {
+final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable, PersonMeta.Sentence> {
 
     public static final PersonMeta Instance = new PersonMeta();
 
-    public final Index index = new Index();
-
+    @Override
     public Atom atom() {
         return new Atom();
     }
 
+    @Override
+    public Atom atom(Term.Atom orig) {
+        Atom o = (Atom) orig;
+        Atom a = new Atom();
+
+        a.sentenceIndex = o.sentenceIndex;
+        a.parent = o.parent;
+        return a;
+    }
+
+    @Override
     public Variable variable() {
         return new Variable();
     }
 
+    @Override
     public Sentence sentence(Term name, Term age) {
         return new Sentence(name, age);
+    }
+
+    static PersonMeta.Sentence ground(PersonTerm t) {
+        PersonMeta $m = PersonMeta.Instance;
+        PersonMeta.Sentence s = $m.sentence(
+                $m.atom(),
+                $m.atom());
+        s.bind(t);
+        return s;
     }
 
     final class Index {
@@ -40,10 +60,17 @@ final class PersonMeta {
         @Override
         public void setValue(Object value) {
             switch (sentenceIndex) {
+                case Index.$predicate:
+                    if (parent.getClass() != value) {
+                        throw new IllegalArgumentException();
+                    }
+                    return;
                 case Index.name:
                     parent.setName((String) value);
+                    return;
                 case Index.age:
                     parent.setAge((int) value);
+                    return;
                 default:
                     throw new ArrayIndexOutOfBoundsException(sentenceIndex);
             }
@@ -153,18 +180,9 @@ final class PersonMeta {
             return Arrays.asList(terms).toString();
         }
     }
-
-    public static Sentence ground(PersonTerm t) {
-        PersonMeta $m = PersonMeta.Instance;
-        Sentence s = $m.sentence(
-                $m.atom(),
-                $m.atom());
-        s.bind(t);
-        return s;
-    }
 }
 
-final class PersonTerm extends Person implements Term.Meta {
+final class PersonTerm extends Person implements Term.ObjectTerm {
 
     PersonMeta.Sentence $sentence = PersonMeta.ground(this);
 
