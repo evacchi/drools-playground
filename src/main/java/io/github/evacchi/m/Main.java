@@ -31,13 +31,15 @@ public class Main {
         throw new IllegalArgumentException();
     }
     private static SubstitutionSet unifyVariable(Term.Variable x, Term y, SubstitutionSet s) {
-        if (x == y) return s;
+//        if (x == y) return s;
+        if (x.equals(y)) return s;
         if (s.isBound(x)) unify(s.get(x), y, s);
         return new SubstitutionSet(s).put(x, y);
     }
     private static SubstitutionSet unifyAtom(Term.Atom x, Term y, SubstitutionSet s) {
-        if (x == y) return new SubstitutionSet(s);
-        if (y instanceof Term.Variable) unify(y, x, s);
+//        if (x == y) return new SubstitutionSet(s);
+        if (x.equals(y)) return new SubstitutionSet(s);
+        if (y instanceof Term.Variable) return unify(y, x, s);
         return null;
     }
     private static SubstitutionSet unifySentence(Term.Sentence x, Term y, SubstitutionSet s) {

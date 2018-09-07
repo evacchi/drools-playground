@@ -1,5 +1,8 @@
 package io.github.evacchi.m;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public abstract class Person {
     protected String name;
     protected int age;
@@ -29,7 +32,7 @@ final class PersonMeta {
 
     final static class Atom implements Term.Atom {
 
-        int sentenceIndex;
+        int sentenceIndex = -1;
         PersonTerm parent;
 
         @Override
@@ -62,6 +65,17 @@ final class PersonMeta {
         public void bind(Object value) {
             this.parent = (PersonTerm) value;
         }
+
+        @Override
+        public String toString() {
+            return getValue().toString();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof Atom &&
+                    Objects.equals(getValue(), ((Atom) obj).getValue());
+        }
     }
 
     final static class Variable implements Term.Variable {
@@ -90,11 +104,19 @@ final class PersonMeta {
             return terms;
         }
 
-        public void bind(Object term) {
-            PersonTerm tt = (PersonTerm) term;
-            for (Term t : tt.$sentence().terms()) {
-                t.bind(term);
+        public void bind(Object o) {
+            PersonTerm tt = (PersonTerm) o;
+            Term[] terms = tt.$sentence().terms();
+            for (int i = 0; i < terms.length; i++) {
+                Term t = terms[i];
+                if (t instanceof PersonMeta.Atom) ((PersonMeta.Atom) t).sentenceIndex = i;
+                t.bind(o);
             }
+        }
+
+        @Override
+        public String toString() {
+            return Arrays.asList(terms).toString();
         }
     }
 }
