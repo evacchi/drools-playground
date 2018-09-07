@@ -1,18 +1,17 @@
 package io.github.evacchi.m;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 public class Unification {
 
-    private final Object XX;
+    private final Object goal;
     private final Term.Meta<?, ?, ?> meta;
 
     public Unification(Object goal, Term.Meta<?, ?, ?> m) {
-        this.XX = goal;
+        this.goal = goal;
         meta = m;
     }
-
-
 
     public Optional<Term> query(Term.Sentence k, Term.Sentence goal) {
         return Optional.ofNullable(unify(k, goal, new SubstitutionSet()))
@@ -26,13 +25,11 @@ public class Unification {
         throw new IllegalArgumentException();
     }
     private SubstitutionSet unifyVariable(Term.Variable x, Term y, SubstitutionSet s) {
-//        if (x == y) return s;
         if (x.equals(y)) return s;
         if (s.isBound(x)) unify(s.get(x), y, s);
         return new SubstitutionSet(s).put(x, y);
     }
     private SubstitutionSet unifyAtom(Term.Atom x, Term y, SubstitutionSet s) {
-//        if (x == y) return new SubstitutionSet(s);
         if (x.equals(y)) return new SubstitutionSet(s);
         if (y instanceof Term.Variable) return unify(y, x, s);
         return null;
@@ -78,7 +75,7 @@ public class Unification {
 
     Term replaceVariables(Term.Atom t, SubstitutionSet s) {
         Term.Atom a = meta.atom(t);
-        a.bind(XX);
+        a.bind(goal);
         a.setValue(t.getValue());
         return a;
     }
@@ -88,5 +85,41 @@ public class Unification {
             s.term(i, replaceVariables(s.term(i), ss));
         }
         return s;
+    }
+}
+
+
+final class SubstitutionSet {
+
+    private final HashMap<Term.Variable, Term> bindings;
+
+    SubstitutionSet(HashMap<Term.Variable, Term> bindings) {
+        this.bindings = bindings;
+    }
+
+    public SubstitutionSet(SubstitutionSet other) {
+        this(other.bindings);
+    }
+
+    public SubstitutionSet() {
+        this(new HashMap<>());
+    }
+
+    public SubstitutionSet put(Term.Variable v, Term exp) {
+        this.bindings.put(v, exp);
+        return this;
+    }
+
+    public Term get(Term.Variable v) {
+        return this.bindings.get(v);
+    }
+
+    public boolean isBound(Term.Variable v) {
+        return this.bindings.containsKey(v);
+    }
+
+    @Override
+    public String toString() {
+        return "Bindings:" + bindings;
     }
 }
