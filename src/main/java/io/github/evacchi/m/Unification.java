@@ -18,33 +18,34 @@ public class Unification {
                 .map(s -> replaceVariables(goal, s));
     }
 
-    private SubstitutionSet unify(Term x, Term y, SubstitutionSet s) {
-        if (x instanceof Term.Variable) return unifyVariable((Term.Variable) x, y, s);
-        if (x instanceof Term.Atom) return unifyAtom((Term.Atom) x, y, s);
-        if (x instanceof Term.Sentence) return unifySentence((Term.Sentence) x, y, s);
+    private SubstitutionSet unify(Term t1, Term t2, SubstitutionSet s) {
+        if (t1 instanceof Term.Variable) return unifyVariable((Term.Variable) t1, t2, s);
+        if (t1 instanceof Term.Atom) return unifyAtom((Term.Atom) t1, t2, s);
+        if (t1 instanceof Term.Sentence) return unifySentence((Term.Sentence) t1, t2, s);
         throw new IllegalArgumentException();
     }
-    private SubstitutionSet unifyVariable(Term.Variable x, Term y, SubstitutionSet s) {
-        if (x.equals(y)) return s;
-        if (s.isBound(x)) unify(s.get(x), y, s);
-        return new SubstitutionSet(s).put(x, y);
+    private SubstitutionSet unifyVariable(Term.Variable v, Term t, SubstitutionSet s) {
+        if (v.equals(t)) return s;
+        if (s.isBound(v)) unify(s.get(v), t, s);
+        return //new SubstitutionSet(s)
+                s.put(v, t);
     }
-    private SubstitutionSet unifyAtom(Term.Atom x, Term y, SubstitutionSet s) {
-        if (x.equals(y)) return new SubstitutionSet(s);
-        if (y instanceof Term.Variable) return unify(y, x, s);
+    private SubstitutionSet unifyAtom(Term.Atom a, Term t, SubstitutionSet s) {
+        if (a.equals(t)) return s;//new SubstitutionSet(s);
+        if (t instanceof Term.Variable) return unify(t, a, s);
         return null;
     }
-    private SubstitutionSet unifySentence(Term.Sentence x, Term y, SubstitutionSet s) {
-        if (y instanceof Term.Sentence) {
-            Term.Sentence ss = (Term.Sentence) y;
+    private SubstitutionSet unifySentence(Term.Sentence s1, Term t, SubstitutionSet s) {
+        if (t instanceof Term.Sentence) {
+            Term.Sentence s2 = (Term.Sentence) t;
             // cannot unify when arity differs
-            if (x.size() != ss.size()) {
+            if (s1.size() != s2.size()) {
                 return null;
             }
 
-            SubstitutionSet sNew = new SubstitutionSet(s);
-            for (int i = 0; i < x.size(); i++) {
-                sNew = unify(x.term(i), ss.term(i), sNew);
+            SubstitutionSet sNew = s;//new SubstitutionSet(s);
+            for (int i = 0; i < s1.size(); i++) {
+                sNew = unify(s1.term(i), s2.term(i), sNew);
                 if (sNew == null) {
                     return null;
                 }
@@ -52,8 +53,8 @@ public class Unification {
             return sNew;
         }
 
-        if (y instanceof Term.Variable) {
-            return unify(x, y, s);
+        if (t instanceof Term.Variable) {
+            return unify(s1, t, s);
         }
 
         return null;
@@ -68,16 +69,16 @@ public class Unification {
         throw new IllegalArgumentException();
     }
 
-    Term replaceVariables(Term.Variable t, SubstitutionSet s) {
-        if (s.isBound(t)) return replaceVariables(s.get(t), s);
-        else return t;
+    Term replaceVariables(Term.Variable v, SubstitutionSet s) {
+        if (s.isBound(v)) return replaceVariables(s.get(v), s);
+        else return v;
     }
 
-    Term replaceVariables(Term.Atom t, SubstitutionSet s) {
-        Term.Atom a = meta.atom(t);
-        a.bind(goal);
-        a.setValue(t.getValue());
-        return a;
+    Term replaceVariables(Term.Atom a, SubstitutionSet s) {
+        Term.Atom a2 = meta.atom(a);
+        a2.bind(goal);
+        a2.setValue(a.getValue());
+        return a2;
     }
 
     Term replaceVariables(Term.Sentence s, SubstitutionSet ss) {

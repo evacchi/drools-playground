@@ -13,7 +13,7 @@ public class Main {
         paul.setAge(50);
 
         PersonTerm X = new PersonTerm();
-        X.setAge(50);
+        X.setAge(510);
         X.$sentence().terms(
                 m.variable(),
                 m.atom());
