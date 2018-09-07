@@ -1,27 +1,36 @@
 package io.github.evacchi.m;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 public class Main {
 
     public static void main(String[] args) {
+        PersonMeta m = PersonMeta.Instance;
+
         PersonTerm paul = new PersonTerm();
         paul.setName("Paul");
         paul.setAge(50);
-        paul.$sentence().bind(paul);
 
         PersonTerm X = new PersonTerm();
-        PersonMeta m = X.$meta();
-        PersonMeta.Sentence sentence = X.$sentence();
-        Term[] terms = sentence.terms();
-        terms[m.index.name] = m.variable();
-        terms[m.index.age] = m.variable();
-        sentence.bind(X);
+        X.setAge(50);
+        X.$sentence().terms(
+                m.variable(),
+                m.atom());
 
-        SubstitutionSet s = unify(paul.$sentence(), X.$sentence(), new SubstitutionSet());
-        Term r = replaceVariables(X.$sentence(), s);
 
-        System.out.println(r);
+        query(paul.$sentence(), X.$sentence())
+                .ifPresentOrElse(
+                        System.out::println,
+                        () -> System.out.println("False"));
+
+        System.out.println(X);
+        System.out.println(X.$sentence());
+    }
+
+    public static Optional<Term> query(Term.Sentence k, Term.Sentence goal) {
+        return Optional.ofNullable(unify(k, goal, new SubstitutionSet()))
+                .map(s -> replaceVariables(goal, s));
     }
 
     private static SubstitutionSet unify(Term x, Term y, SubstitutionSet s) {
@@ -46,13 +55,13 @@ public class Main {
         if (y instanceof Term.Sentence) {
             Term.Sentence ss = (Term.Sentence) y;
             // cannot unify when arity differs
-            if (x.terms().length != ss.terms().length) {
+            if (x.size() != ss.size()) {
                 return null;
             }
 
             SubstitutionSet sNew = new SubstitutionSet(s);
-            for (int i = 0; i < x.terms().length; i++) {
-                sNew = unify(x.terms()[i], ss.terms()[i], sNew);
+            for (int i = 0; i < x.size(); i++) {
+                sNew = unify(x.term(i), ss.term(i), sNew);
                 if (sNew == null) {
                     return null;
                 }

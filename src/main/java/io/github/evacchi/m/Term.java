@@ -11,12 +11,12 @@ interface Term {
     interface Variable extends Term {}
     interface Sentence extends Term {
         Term[] terms();
+        Term term(int i);
+        Sentence term(int i, Term t);
+        int size();
     }
 
     interface Meta {
-
-        PersonMeta $meta();
-
         Sentence $sentence();
     }
 

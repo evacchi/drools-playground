@@ -10,6 +10,8 @@ public abstract class Person {
 
 final class PersonMeta {
 
+    public static final PersonMeta Instance = new PersonMeta();
+
     public final Index index = new Index();
 
     public Atom atom() {
@@ -104,12 +106,44 @@ final class PersonMeta {
             return terms;
         }
 
+        @Override
+        public Term term(int i) {
+            return terms[i];
+        }
+
+        public PersonMeta.Sentence terms(Term name, Term age) {
+            term(1, name);
+            term(2, age);
+            return this;
+        }
+
+
+
+        @Override
+        public PersonMeta.Sentence term(int i, Term t) {
+            terms[i] = t;
+            t.bind(parent);
+            if (t instanceof PersonMeta.Atom) {
+                ((PersonMeta.Atom) t).sentenceIndex = i;
+            }
+            return this;
+        }
+
+        @Override
+        public int size() {
+            return terms.length;
+        }
+
         public void bind(Object o) {
             PersonTerm tt = (PersonTerm) o;
-            Term[] terms = tt.$sentence().terms();
+            this.parent = tt;
+            tt.$sentence = this;
             for (int i = 0; i < terms.length; i++) {
                 Term t = terms[i];
-                if (t instanceof PersonMeta.Atom) ((PersonMeta.Atom) t).sentenceIndex = i;
+                if (t instanceof PersonMeta.Atom) {
+                    ((PersonMeta.Atom) t).sentenceIndex = i;
+                }
+
                 t.bind(o);
             }
         }
@@ -119,26 +153,20 @@ final class PersonMeta {
             return Arrays.asList(terms).toString();
         }
     }
+
+    public static Sentence ground(PersonTerm t) {
+        PersonMeta $m = PersonMeta.Instance;
+        Sentence s = $m.sentence(
+                $m.atom(),
+                $m.atom());
+        s.bind(t);
+        return s;
+    }
 }
 
 final class PersonTerm extends Person implements Term.Meta {
 
-    private final PersonMeta $meta = new PersonMeta();
-    private final PersonMeta.Sentence $sentence;
-
-    {
-        PersonMeta.Sentence sentence =
-                $meta.sentence($meta.atom(), $meta.atom());
-//        sentence.bind(this);
-        this.$sentence = sentence;
-    }
-
-
-    @Override
-    public PersonMeta $meta() {
-        return $meta;
-    }
-
+    PersonMeta.Sentence $sentence = PersonMeta.ground(this);
 
     @Override
     public PersonMeta.Sentence $sentence() {
@@ -162,5 +190,13 @@ final class PersonTerm extends Person implements Term.Meta {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "PersonTerm{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                "} " + super.toString();
     }
 }
