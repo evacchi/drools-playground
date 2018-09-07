@@ -7,28 +7,31 @@ public class Main {
         PersonMeta m = PersonMeta.Instance;
 
         // person(paul, X)
-        PersonObject paul = m.createPerson();
-        paul.setName("Paul");
-        m.sentenceOf(paul).terms(
+        PersonObject obj1 = m.createPerson();
+        obj1.setName("Paul");
+        m.sentenceOf(obj1).terms(
                 m.createAtom(),
                 m.createVariable());
 
         // person(Y, 50)
-        PersonObject X = m.createPerson();
-        X.setAge(50);
-        m.sentenceOf(X).terms(
+        PersonObject obj2 = m.createPerson();
+        obj2.setAge(50);
+        m.sentenceOf(obj2).terms(
                 m.createVariable(),
                 m.createAtom());
 
         new Unification().unify(
-                m.sentenceOf(paul),
-                m.sentenceOf(X));
+                m.sentenceOf(obj1),
+                m.sentenceOf(obj2));
 
-        System.out.println(paul);
-        System.out.println(m.sentenceOf(paul));
+        // both obj1, obj2 result in
+        // person(paul, 50)
 
-        System.out.println(X);
-        System.out.println(m.sentenceOf(X));
+        System.out.println(obj1);
+        System.out.println(m.sentenceOf(obj1));
+
+        System.out.println(obj2);
+        System.out.println(m.sentenceOf(obj2));
 
     }
 

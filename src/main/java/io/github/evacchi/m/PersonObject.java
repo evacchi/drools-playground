@@ -1,12 +1,28 @@
 package io.github.evacchi.m;
 
-public interface PersonObject {
+public class PersonObject extends Person {
 
-    String getName();
+    public String getName() {
+        return name;
+    }
 
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    int getAge();
+    public int getAge() {
+        return age;
+    }
 
-    void setAge(int age);
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String toString() {
+        return "PersonTerm{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                "} ";
+    }
+
 }

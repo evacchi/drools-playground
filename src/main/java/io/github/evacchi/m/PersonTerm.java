@@ -1,7 +1,6 @@
 package io.github.evacchi.m;
 
-final class PersonTerm extends Person implements Term.ObjectTerm,
-                                                 PersonObject {
+class PersonTerm extends PersonObject implements Term.ObjectTerm {
 
     PersonMeta.Sentence $sentence;
 
@@ -21,34 +20,4 @@ final class PersonTerm extends Person implements Term.ObjectTerm,
         this.$sentence = (PersonMeta.Sentence) $sentence;
     }
 
-    private String name;
-    private int age;
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public int getAge() {
-        return age;
-    }
-
-    @Override
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    @Override
-    public String toString() {
-        return "PersonTerm{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                "} ";
-    }
 }
