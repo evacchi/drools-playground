@@ -8,17 +8,25 @@ public abstract class Person {
     protected int age;
 }
 
-final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable, PersonMeta.Sentence> {
+final class PersonMeta implements Term.Meta<
+        PersonMeta.Atom, PersonMeta.Variable, PersonMeta.Sentence> {
 
     public static final PersonMeta Instance = new PersonMeta();
 
+    public PersonObject createPerson() {
+        return new PersonTerm();
+    }
+    public Sentence sentenceOf(PersonObject term) {
+        return ((PersonTerm)term).$sentence();
+    }
+
     @Override
-    public Atom atom() {
+    public Atom createAtom() {
         return new Atom();
     }
 
     @Override
-    public Atom atom(Term.Atom orig) {
+    public Atom createAtom(Term.Atom orig) {
         Atom o = (Atom) orig;
         Atom a = new Atom();
         a.index = o.index;
@@ -27,31 +35,22 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
     }
 
     @Override
-    public Variable variable() {
+    public Variable createVariable() {
         return new Variable();
     }
 
     @Override
-    public Atom atom(Term.Variable orig) {
+    public Sentence createSentence() {
+        return new Sentence();
+    }
+
+    @Override
+    public Atom createAtom(Term.Variable orig) {
         Variable o = (Variable) orig;
         Atom a = new Atom();
         a.index = o.index;
         a.parent = o.parent;
         return a;
-    }
-
-    @Override
-    public Sentence sentence(Term name, Term age) {
-        return new Sentence(name, age);
-    }
-
-    static PersonMeta.Sentence ground(PersonTerm t) {
-        PersonMeta $m = PersonMeta.Instance;
-        PersonMeta.Sentence s = $m.sentence(
-                $m.atom(),
-                $m.atom());
-        s.bind(t);
-        return s;
     }
 
     final class Index {
@@ -63,6 +62,10 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
     abstract static class AbstractTerm implements Term {
         int index = -1;
         PersonTerm parent;
+
+        public PersonTerm parentObject() {
+            return parent;
+        }
 
         @Override
         public void bind(Object value) {
@@ -134,14 +137,12 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
 
     final static class Sentence extends AbstractTerm implements Term.Sentence {
         private final Term[] terms;
-        PersonTerm parent;
 
-        public Sentence(Term name, Term age) {
-            PersonMeta.Atom head = new PersonMeta.Atom();
+        public Sentence() {
             this.terms = new Term[] {
-                    head,
-                    name,
-                    age
+                    Instance.createAtom(),
+                    Instance.createAtom(),
+                    Instance.createAtom(),
             };
         }
 
@@ -156,12 +157,10 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
         }
 
         public PersonMeta.Sentence terms(Term name, Term age) {
-            term(1, name);
-            term(2, age);
+            term(Index.name, name);
+            term(Index.age, age);
             return this;
         }
-
-
 
         @Override
         public PersonMeta.Sentence term(int i, Term t) {
@@ -188,15 +187,27 @@ final class PersonMeta implements Term.Meta<PersonMeta.Atom, PersonMeta.Variable
         }
 
         @Override
+        public PersonMeta meta() {
+            return PersonMeta.Instance;
+        }
+
+        @Override
         public String toString() {
             return Arrays.asList(terms).toString();
         }
     }
 }
 
-final class PersonTerm extends Person implements Term.ObjectTerm {
+final class PersonTerm extends Person implements Term.ObjectTerm,
+                                                 PersonObject {
 
-    PersonMeta.Sentence $sentence = PersonMeta.ground(this);
+    PersonMeta.Sentence $sentence;
+
+    {
+        PersonMeta.Sentence sentence =
+                PersonMeta.Instance.createSentence();
+        sentence.bind(this);
+    }
 
     @Override
     public PersonMeta.Sentence $sentence() {
@@ -206,18 +217,22 @@ final class PersonTerm extends Person implements Term.ObjectTerm {
     private String name;
     private int age;
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public int getAge() {
         return age;
     }
 
+    @Override
     public void setAge(int age) {
         this.age = age;
     }
@@ -227,6 +242,6 @@ final class PersonTerm extends Person implements Term.ObjectTerm {
         return "PersonTerm{" +
                 "name='" + name + '\'' +
                 ", age=" + age +
-                "} " + super.toString();
+                "} ";
     }
 }

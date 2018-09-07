@@ -3,6 +3,7 @@ package io.github.evacchi.m;
 interface Term {
 
     void bind(Object value);
+    ObjectTerm parentObject();
     void setIndex(int index);
     int getIndex();
 
@@ -16,6 +17,7 @@ interface Term {
         Term term(int i);
         Sentence term(int i, Term t);
         int size();
+        Meta<?,?,?> meta();
     }
 
     interface ObjectTerm {
@@ -23,15 +25,15 @@ interface Term {
     }
 
     interface Meta<A extends Atom, V extends Variable, S extends Sentence> {
-        A atom();
+        A createAtom();
 
-        A atom(Term.Atom orig);
+        A createAtom(Term.Atom orig);
 
-        A atom(Term.Variable orig);
+        A createAtom(Term.Variable orig);
 
-        V variable();
+        V createVariable();
 
-        S sentence(Term name, Term age);
+        S createSentence();
 
     }
 

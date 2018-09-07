@@ -1,34 +1,34 @@
 package io.github.evacchi.m;
 
-import java.util.HashMap;
-
 public class Main {
 
 
     public static void main(String[] args) {
         PersonMeta m = PersonMeta.Instance;
 
-        PersonTerm paul = new PersonTerm();
+        // person(paul, X)
+        PersonObject paul = m.createPerson();
         paul.setName("Paul");
-        paul.$sentence().terms(
-                m.atom(),
-                m.variable()
-        );
+        m.sentenceOf(paul).terms(
+                m.createAtom(),
+                m.createVariable());
 
-        PersonTerm X = new PersonTerm();
+        // person(Y, 50)
+        PersonObject X = m.createPerson();
         X.setAge(50);
-        X.$sentence().terms(
-                m.variable(),
-                m.atom());
+        m.sentenceOf(X).terms(
+                m.createVariable(),
+                m.createAtom());
 
-        Unification unification = new Unification(m, paul, X);
-        unification.unify();
+        new Unification().unify(
+                m.sentenceOf(paul),
+                m.sentenceOf(X));
 
         System.out.println(paul);
-        System.out.println(paul.$sentence());
+        System.out.println(m.sentenceOf(paul));
 
         System.out.println(X);
-        System.out.println(X.$sentence());
+        System.out.println(m.sentenceOf(X));
 
     }
 
