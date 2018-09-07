@@ -4,6 +4,7 @@ interface Term {
 
     void bind(Object value);
     ObjectTerm parentObject();
+    void setParentObject(ObjectTerm parentObject);
     void setIndex(int index);
     int getIndex();
 
@@ -15,13 +16,14 @@ interface Term {
     interface Sentence extends Term {
         Term[] terms();
         Term term(int i);
-        Sentence term(int i, Term t);
+        void term(int i, Term t);
         int size();
         Meta<?,?,?> meta();
     }
 
     interface ObjectTerm {
-        Sentence $sentence();
+        Sentence $getSentence();
+        void $setSentence(Sentence sentence);
     }
 
     interface Meta<A extends Atom, V extends Variable, S extends Sentence> {
