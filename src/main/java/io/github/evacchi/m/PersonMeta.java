@@ -1,17 +1,23 @@
 package io.github.evacchi.m;
 
-import java.util.Objects;
+import io.github.evacchi.m.lib.AbstractAtom;
+import io.github.evacchi.m.lib.AbstractMeta;
+import io.github.evacchi.m.lib.AbstractCompound;
+import io.github.evacchi.m.lib.AbstractTerm;
+import io.github.evacchi.m.lib.Generated;
+import io.github.evacchi.m.lib.Term;
 
+@Generated
 final class PersonMeta extends AbstractMeta<
-        PersonMeta.Atom, PersonMeta.Variable, PersonMeta.Sentence> {
+        PersonMeta.Atom, PersonMeta.Variable, PersonMeta.Compound> {
 
     public static final PersonMeta Instance = new PersonMeta();
 
     public PersonObject createPerson() {
         return new PersonTerm();
     }
-    public Sentence sentenceOf(PersonObject term) {
-        return ((PersonTerm)term).$getSentence();
+    public Compound termOf(PersonObject term) {
+        return ((PersonTerm)term).$getTerm();
     }
 
     @Override
@@ -25,8 +31,8 @@ final class PersonMeta extends AbstractMeta<
     }
 
     @Override
-    public Sentence createSentence() {
-        return new Sentence();
+    public Compound createCompoundTerm() {
+        return new Compound();
     }
 
     final static class Index {
@@ -35,58 +41,48 @@ final class PersonMeta extends AbstractMeta<
         public static final int age = 2;
     }
 
-    final static class Atom extends AbstractTerm<PersonTerm> implements Term.Atom {
+    final static class Atom extends AbstractAtom<PersonTerm> implements Term.Atom {
 
         @Override
         public void setValue(Object value) {
-            switch (index) {
+            switch (getIndex()) {
                 case Index.$predicate:
-                    if (parent.getClass() != value) {
+                    if (parentObject().getClass() != value) {
                         throw new IllegalArgumentException();
                     }
                     return;
                 case Index.name:
-                    parent.setName((String) value);
+                    parentObject().setName((String) value);
                     return;
                 case Index.age:
-                    parent.setAge((int) value);
+                    parentObject().setAge((int) value);
                     return;
                 default:
-                    throw new ArrayIndexOutOfBoundsException(index);
+                    throw new ArrayIndexOutOfBoundsException(getIndex());
             }
         }
 
         @Override
         public Object getValue() {
-            switch (index) {
+            switch (getIndex()) {
                 case Index.$predicate:
-                    return parent.getClass();
+                    return parentObject().getClass();
                 case Index.name:
-                    return parent.getName();
+                    return parentObject().getName();
                 case Index.age:
-                    return parent.getAge();
+                    return parentObject().getAge();
                 default:
-                    throw new ArrayIndexOutOfBoundsException(index);
+                    throw new ArrayIndexOutOfBoundsException(getIndex());
             }
         }
 
-        @Override
-        public String toString() {
-            return getValue().toString();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof Atom &&
-                    Objects.equals(getValue(), ((Atom) obj).getValue());
-        }
     }
 
     final static class Variable extends AbstractTerm<PersonTerm> implements Term.Variable {}
 
-    final static class Sentence extends AbstractSentence<PersonTerm> implements Term.Sentence {
+    final static class Compound extends AbstractCompound<PersonTerm> implements Term.Compound {
 
-        public Sentence() {
+        public Compound() {
             super(new Term[] {
                     Instance.createAtom(),
                     Instance.createAtom(),
@@ -94,7 +90,7 @@ final class PersonMeta extends AbstractMeta<
             });
         }
 
-        public PersonMeta.Sentence terms(Term name, Term age) {
+        public PersonMeta.Compound terms(Term name, Term age) {
             term(Index.name, name);
             term(Index.age, age);
             return this;

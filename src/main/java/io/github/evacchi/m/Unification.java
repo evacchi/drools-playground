@@ -1,8 +1,10 @@
 package io.github.evacchi.m;
 
+import io.github.evacchi.m.lib.Term;
+
 public class Unification {
 
-    public void unify(Term.Sentence left, Term.Sentence right) {
+    public void unify(Term.Compound left, Term.Compound right) {
         if (left.size() != right.size()) {
             throw new IllegalArgumentException();
         }
@@ -14,10 +16,10 @@ public class Unification {
                 copyAtom((Term.Atom) lt, right, i);
             } else if (lt instanceof Term.Variable && rt instanceof Term.Atom) {
                 copyAtom((Term.Atom) rt, left, i);
-            } else if (lt instanceof Term.Sentence && rt instanceof Term.Variable) {
-                copySentence((Term.Sentence) lt, right, i);
-            } else if (lt instanceof Term.Variable && rt instanceof Term.Sentence) {
-                copySentence((Term.Sentence) rt, left, i);
+            } else if (lt instanceof Term.Compound && rt instanceof Term.Variable) {
+                copyCompound((Term.Compound) lt, right, i);
+            } else if (lt instanceof Term.Variable && rt instanceof Term.Compound) {
+                copyCompound((Term.Compound) rt, left, i);
             } else if (lt instanceof Term.Variable && rt instanceof Term.Variable) {
                 Term.Atom la = createAtom((Term.Variable) lt, left, i);
                 Term.Atom ra = createAtom((Term.Variable) rt, right, i);
@@ -29,32 +31,32 @@ public class Unification {
         }
     }
 
-    private void copySentence(Term.Sentence sentence, Term.Sentence parent, int index) {
+    private void copyCompound(Term.Compound compound, Term.Compound parent, int index) {
         // fixme not working/tested yet
-        Term.Meta<?,?,?> meta = sentence.meta();
-        Term.Sentence s = meta.createSentence();
+        Term.Meta<?,?,?> meta = compound.meta();
+        Term.Compound s = meta.createCompoundTerm();
         s.bind(parent.parentObject());
-        for (int i = 0; i < sentence.size(); i++) {
-            sentence.term(i, meta.createVariable());
+        for (int i = 0; i < compound.size(); i++) {
+            compound.term(i, meta.createVariable());
         }
         parent.term(index, s);
 
     }
 
-    private Term.Atom createAtom(Term.Variable variable, Term.Sentence sentence, int index) {
-        Term.Meta<?,?,?> meta = sentence.meta();
+    private Term.Atom createAtom(Term.Variable variable, Term.Compound compound, int index) {
+        Term.Meta<?,?,?> meta = compound.meta();
         Term.Atom a1 = meta.createAtom(variable);
-        a1.bind(sentence.parentObject());
-        sentence.term(index, a1);
+        a1.bind(compound.parentObject());
+        compound.term(index, a1);
         return a1;
     }
 
-    private void copyAtom(Term.Atom atom, Term.Sentence sentence, int index) {
-        Term.Meta<?,?,?> meta = sentence.meta();
+    private void copyAtom(Term.Atom atom, Term.Compound term, int index) {
+        Term.Meta<?,?,?> meta = term.meta();
         Term.Atom copy = meta.createAtom(atom);
-        copy.bind(sentence.parentObject());
+        copy.bind(term.parentObject());
         copy.setValue(atom.getValue());
-        sentence.term(index, copy);
+        term.term(index, copy);
     }
 }
 

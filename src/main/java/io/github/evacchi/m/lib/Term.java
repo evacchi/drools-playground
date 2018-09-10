@@ -1,6 +1,6 @@
-package io.github.evacchi.m;
+package io.github.evacchi.m.lib;
 
-interface Term {
+public interface Term {
 
     void bind(Object value);
     ObjectTerm parentObject();
@@ -13,7 +13,7 @@ interface Term {
         Object getValue();
     }
     interface Variable extends Term {}
-    interface Sentence extends Term {
+    interface Compound extends Term {
         Term[] terms();
         Term term(int i);
         void term(int i, Term t);
@@ -22,11 +22,11 @@ interface Term {
     }
 
     interface ObjectTerm {
-        Sentence $getSentence();
-        void $setSentence(Sentence sentence);
+        Compound $getTerm();
+        void $getTerm(Compound compound);
     }
 
-    interface Meta<A extends Atom, V extends Variable, S extends Sentence> {
+    interface Meta<A extends Atom, V extends Variable, S extends Compound> {
         A createAtom();
 
         A createAtom(Term.Atom orig);
@@ -35,7 +35,7 @@ interface Term {
 
         V createVariable();
 
-        S createSentence();
+        S createCompoundTerm();
 
     }
 

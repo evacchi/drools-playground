@@ -1,5 +1,9 @@
 package io.github.evacchi.m;
 
+import io.github.evacchi.m.lib.Generated;
+
+// this is the public interface (with getters/setters)
+@Generated
 public class PersonObject extends Person {
 
     public String getName() {

@@ -1,23 +1,26 @@
 package io.github.evacchi.m;
 
+import io.github.evacchi.m.lib.Generated;
+import io.github.evacchi.m.lib.Term;
+
+// the private/internal interface with the getters for
+@Generated
 class PersonTerm extends PersonObject implements Term.ObjectTerm {
 
-    PersonMeta.Sentence $sentence;
+    PersonMeta.Compound $term = PersonMeta.Instance.createCompoundTerm();
 
     {
-        PersonMeta.Sentence sentence =
-                PersonMeta.Instance.createSentence();
-        sentence.bind(this);
+        $term.bind(this);
     }
 
     @Override
-    public PersonMeta.Sentence $getSentence() {
-        return $sentence;
+    public PersonMeta.Compound $getTerm() {
+        return $term;
     }
 
     @Override
-    public void $setSentence(Term.Sentence $sentence) {
-        this.$sentence = (PersonMeta.Sentence) $sentence;
+    public void $getTerm(Term.Compound $compound) {
+        this.$term = (PersonMeta.Compound) $compound;
     }
 
 }

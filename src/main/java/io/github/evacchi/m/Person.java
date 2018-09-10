@@ -1,8 +1,10 @@
 package io.github.evacchi.m;
 
-public abstract class Person {
+import io.github.evacchi.m.lib.ObjectTerm;
 
-    protected String name;
-    protected int age;
+@ObjectTerm
+public class Person {
+    String name;
+    int age;
 }
 
