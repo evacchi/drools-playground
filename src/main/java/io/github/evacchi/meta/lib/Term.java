@@ -1,4 +1,4 @@
-package io.github.evacchi.m.lib;
+package io.github.evacchi.meta.lib;
 
 public interface Term {
 

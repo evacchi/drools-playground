@@ -1,4 +1,4 @@
-package io.github.evacchi.m;
+package io.github.evacchi.meta;
 
 public class Main {
 

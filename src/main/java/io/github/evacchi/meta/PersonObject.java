@@ -1,6 +1,6 @@
-package io.github.evacchi.m;
+package io.github.evacchi.meta;
 
-import io.github.evacchi.m.lib.Generated;
+import io.github.evacchi.meta.lib.Generated;
 
 // this is the public interface (with getters/setters)
 @Generated

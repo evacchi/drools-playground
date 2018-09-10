@@ -1,11 +1,11 @@
-package io.github.evacchi.m;
+package io.github.evacchi.meta;
 
-import io.github.evacchi.m.lib.AbstractAtom;
-import io.github.evacchi.m.lib.AbstractMeta;
-import io.github.evacchi.m.lib.AbstractCompound;
-import io.github.evacchi.m.lib.AbstractTerm;
-import io.github.evacchi.m.lib.Generated;
-import io.github.evacchi.m.lib.Term;
+import io.github.evacchi.meta.lib.AbstractAtom;
+import io.github.evacchi.meta.lib.AbstractMeta;
+import io.github.evacchi.meta.lib.AbstractCompound;
+import io.github.evacchi.meta.lib.AbstractTerm;
+import io.github.evacchi.meta.lib.Generated;
+import io.github.evacchi.meta.lib.Term;
 
 @Generated
 final class PersonMeta extends AbstractMeta<

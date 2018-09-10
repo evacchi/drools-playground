@@ -1,4 +1,4 @@
-package io.github.evacchi.m.lib;
+package io.github.evacchi.meta.lib;
 
 public abstract class AbstractMeta<A extends Term.Atom, V extends Term.Variable, S extends Term.Compound> implements Term.Meta<A,V,S> {
 

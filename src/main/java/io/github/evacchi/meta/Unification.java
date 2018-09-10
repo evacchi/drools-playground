@@ -1,6 +1,6 @@
-package io.github.evacchi.m;
+package io.github.evacchi.meta;
 
-import io.github.evacchi.m.lib.Term;
+import io.github.evacchi.meta.lib.Term;
 
 public class Unification {
 

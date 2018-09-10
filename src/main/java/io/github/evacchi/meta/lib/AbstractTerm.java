@@ -1,4 +1,4 @@
-package io.github.evacchi.m.lib;
+package io.github.evacchi.meta.lib;
 
 public abstract class AbstractTerm<T extends Term.ObjectTerm> implements Term {
     int index = -1;
