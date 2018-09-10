@@ -2,21 +2,21 @@ package io.github.evacchi.meta;
 
 import io.github.evacchi.meta.lib.AbstractAtom;
 import io.github.evacchi.meta.lib.AbstractMeta;
-import io.github.evacchi.meta.lib.AbstractCompound;
+import io.github.evacchi.meta.lib.AbstractStructure;
 import io.github.evacchi.meta.lib.AbstractTerm;
 import io.github.evacchi.meta.lib.Generated;
 import io.github.evacchi.meta.lib.Term;
 
 @Generated
 final class PersonMeta extends AbstractMeta<
-        PersonMeta.Atom, PersonMeta.Variable, PersonMeta.Compound> {
+        PersonMeta.Atom, PersonMeta.Variable, PersonMeta.Structure> {
 
     public static final PersonMeta Instance = new PersonMeta();
 
     public PersonObject createPerson() {
         return new PersonTerm();
     }
-    public Compound termOf(PersonObject term) {
+    public Structure termOf(PersonObject term) {
         return ((PersonTerm)term).$getTerm();
     }
 
@@ -31,8 +31,8 @@ final class PersonMeta extends AbstractMeta<
     }
 
     @Override
-    public Compound createCompoundTerm() {
-        return new Compound();
+    public Structure createCompoundTerm() {
+        return new Structure();
     }
 
     final static class Index {
@@ -80,9 +80,9 @@ final class PersonMeta extends AbstractMeta<
 
     final static class Variable extends AbstractTerm<PersonTerm> implements Term.Variable {}
 
-    final static class Compound extends AbstractCompound<PersonTerm> implements Term.Compound {
+    final static class Structure extends AbstractStructure<PersonTerm> implements Term.Structure {
 
-        public Compound() {
+        public Structure() {
             super(new Term[] {
                     Instance.createAtom(),
                     Instance.createAtom(),
@@ -90,7 +90,7 @@ final class PersonMeta extends AbstractMeta<
             });
         }
 
-        public PersonMeta.Compound terms(Term name, Term age) {
+        public PersonMeta.Structure terms(Term name, Term age) {
             term(Index.name, name);
             term(Index.age, age);
             return this;

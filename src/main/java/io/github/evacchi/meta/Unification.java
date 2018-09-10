@@ -4,7 +4,7 @@ import io.github.evacchi.meta.lib.Term;
 
 public class Unification {
 
-    public void unify(Term.Compound left, Term.Compound right) {
+    public void unify(Term.Structure left, Term.Structure right) {
         if (left.size() != right.size()) {
             throw new IllegalArgumentException();
         }
@@ -16,10 +16,10 @@ public class Unification {
                 copyAtom((Term.Atom) lt, right, i);
             } else if (lt instanceof Term.Variable && rt instanceof Term.Atom) {
                 copyAtom((Term.Atom) rt, left, i);
-            } else if (lt instanceof Term.Compound && rt instanceof Term.Variable) {
-                copyCompound((Term.Compound) lt, right, i);
-            } else if (lt instanceof Term.Variable && rt instanceof Term.Compound) {
-                copyCompound((Term.Compound) rt, left, i);
+            } else if (lt instanceof Term.Structure && rt instanceof Term.Variable) {
+                copyCompound((Term.Structure) lt, right, i);
+            } else if (lt instanceof Term.Variable && rt instanceof Term.Structure) {
+                copyCompound((Term.Structure) rt, left, i);
             } else if (lt instanceof Term.Variable && rt instanceof Term.Variable) {
                 Term.Atom la = createAtom((Term.Variable) lt, left, i);
                 Term.Atom ra = createAtom((Term.Variable) rt, right, i);
@@ -31,27 +31,27 @@ public class Unification {
         }
     }
 
-    private void copyCompound(Term.Compound compound, Term.Compound parent, int index) {
+    private void copyCompound(Term.Structure structure, Term.Structure parent, int index) {
         // fixme not working/tested yet
-        Term.Meta<?,?,?> meta = compound.meta();
-        Term.Compound s = meta.createCompoundTerm();
+        Term.Meta<?,?,?> meta = structure.meta();
+        Term.Structure s = meta.createCompoundTerm();
         s.bind(parent.parentObject());
-        for (int i = 0; i < compound.size(); i++) {
-            compound.term(i, meta.createVariable());
+        for (int i = 0; i < structure.size(); i++) {
+            structure.term(i, meta.createVariable());
         }
         parent.term(index, s);
 
     }
 
-    private Term.Atom createAtom(Term.Variable variable, Term.Compound compound, int index) {
-        Term.Meta<?,?,?> meta = compound.meta();
+    private Term.Atom createAtom(Term.Variable variable, Term.Structure structure, int index) {
+        Term.Meta<?,?,?> meta = structure.meta();
         Term.Atom a1 = meta.createAtom(variable);
-        a1.bind(compound.parentObject());
-        compound.term(index, a1);
+        a1.bind(structure.parentObject());
+        structure.term(index, a1);
         return a1;
     }
 
-    private void copyAtom(Term.Atom atom, Term.Compound term, int index) {
+    private void copyAtom(Term.Atom atom, Term.Structure term, int index) {
         Term.Meta<?,?,?> meta = term.meta();
         Term.Atom copy = meta.createAtom(atom);
         copy.bind(term.parentObject());

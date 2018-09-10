@@ -7,20 +7,20 @@ import io.github.evacchi.meta.lib.Term;
 @Generated
 class PersonTerm extends PersonObject implements Term.ObjectTerm {
 
-    PersonMeta.Compound $term = PersonMeta.Instance.createCompoundTerm();
+    PersonMeta.Structure $term = PersonMeta.Instance.createCompoundTerm();
 
     {
         $term.bind(this);
     }
 
     @Override
-    public PersonMeta.Compound $getTerm() {
+    public PersonMeta.Structure $getTerm() {
         return $term;
     }
 
     @Override
-    public void $getTerm(Term.Compound $compound) {
-        this.$term = (PersonMeta.Compound) $compound;
+    public void $getTerm(Term.Structure $structure) {
+        this.$term = (PersonMeta.Structure) $structure;
     }
 
 }

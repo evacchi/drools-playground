@@ -13,7 +13,7 @@ public interface Term {
         Object getValue();
     }
     interface Variable extends Term {}
-    interface Compound extends Term {
+    interface Structure extends Term {
         Term[] terms();
         Term term(int i);
         void term(int i, Term t);
@@ -22,11 +22,11 @@ public interface Term {
     }
 
     interface ObjectTerm {
-        Compound $getTerm();
-        void $getTerm(Compound compound);
+        Structure $getTerm();
+        void $getTerm(Structure structure);
     }
 
-    interface Meta<A extends Atom, V extends Variable, S extends Compound> {
+    interface Meta<A extends Atom, V extends Variable, S extends Structure> {
         A createAtom();
 
         A createAtom(Term.Atom orig);

@@ -2,10 +2,10 @@ package io.github.evacchi.meta.lib;
 
 import java.util.Arrays;
 
-public abstract class AbstractCompound<T extends Term.ObjectTerm> extends AbstractTerm<T> implements Term.Compound {
+public abstract class AbstractStructure<T extends Term.ObjectTerm> extends AbstractTerm<T> implements Term.Structure {
     private final Term[] terms;
 
-    public AbstractCompound(Term[] terms) {
+    public AbstractStructure(Term[] terms) {
         this.terms = terms;
     }
 

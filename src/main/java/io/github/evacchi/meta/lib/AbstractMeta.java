@@ -1,6 +1,6 @@
 package io.github.evacchi.meta.lib;
 
-public abstract class AbstractMeta<A extends Term.Atom, V extends Term.Variable, S extends Term.Compound> implements Term.Meta<A,V,S> {
+public abstract class AbstractMeta<A extends Term.Atom, V extends Term.Variable, S extends Term.Structure> implements Term.Meta<A,V,S> {
 
     @Override
     public A createAtom(Term.Atom orig) {
