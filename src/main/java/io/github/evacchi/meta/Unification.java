@@ -34,7 +34,7 @@ public class Unification {
     private void copyCompound(Term.Structure structure, Term.Structure parent, int index) {
         // fixme not working/tested yet
         Term.Meta<?,?,?> meta = structure.meta();
-        Term.Structure s = meta.createCompoundTerm();
+        Term.Structure s = meta.createStructure();
         s.bind(parent.parentObject());
         for (int i = 0; i < structure.size(); i++) {
             structure.term(i, meta.createVariable());

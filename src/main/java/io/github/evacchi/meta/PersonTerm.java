@@ -3,24 +3,24 @@ package io.github.evacchi.meta;
 import io.github.evacchi.meta.lib.Generated;
 import io.github.evacchi.meta.lib.Term;
 
-// the private/internal interface with the getters for
+// the private/internal interface with the getters for structure representation
 @Generated
 class PersonTerm extends PersonObject implements Term.ObjectTerm {
 
-    PersonMeta.Structure $term = PersonMeta.Instance.createCompoundTerm();
+    PersonMeta.Structure $struct = PersonMeta.Instance.createStructure();
 
     {
-        $term.bind(this);
+        $struct.bind(this);
     }
 
     @Override
-    public PersonMeta.Structure $getTerm() {
-        return $term;
+    public PersonMeta.Structure $getStructure() {
+        return $struct;
     }
 
     @Override
-    public void $getTerm(Term.Structure $structure) {
-        this.$term = (PersonMeta.Structure) $structure;
+    public void $setStructure(Term.Structure $structure) {
+        this.$struct = (PersonMeta.Structure) $structure;
     }
 
 }

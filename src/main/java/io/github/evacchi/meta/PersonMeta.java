@@ -17,7 +17,7 @@ final class PersonMeta extends AbstractMeta<
         return new PersonTerm();
     }
     public Structure termOf(PersonObject term) {
-        return ((PersonTerm)term).$getTerm();
+        return ((PersonTerm)term).$getStructure();
     }
 
     @Override
@@ -31,7 +31,7 @@ final class PersonMeta extends AbstractMeta<
     }
 
     @Override
-    public Structure createCompoundTerm() {
+    public Structure createStructure() {
         return new Structure();
     }
 

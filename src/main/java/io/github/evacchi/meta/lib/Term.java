@@ -22,8 +22,8 @@ public interface Term {
     }
 
     interface ObjectTerm {
-        Structure $getTerm();
-        void $getTerm(Structure structure);
+        Structure $getStructure();
+        void $setStructure(Structure structure);
     }
 
     interface Meta<A extends Atom, V extends Variable, S extends Structure> {
@@ -35,7 +35,7 @@ public interface Term {
 
         V createVariable();
 
-        S createCompoundTerm();
+        S createStructure();
 
     }
 

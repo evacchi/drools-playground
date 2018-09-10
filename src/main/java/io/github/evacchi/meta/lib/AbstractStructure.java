@@ -34,7 +34,7 @@ public abstract class AbstractStructure<T extends Term.ObjectTerm> extends Abstr
     public void bind(Object o) {
         T tt = (T) o;
         this.parent = tt;
-        tt.$getTerm(this);
+        tt.$setStructure(this);
         for (int i = 0; i < terms.length; i++) {
             Term t = terms[i];
             t.setIndex(i);
