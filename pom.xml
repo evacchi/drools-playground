@@ -10,9 +10,9 @@
     <name>drools-playground</name>
 
     <properties>
-        <maven.compiler.source>10</maven.compiler.source>
-        <maven.compiler.target>10</maven.compiler.target>
-        <drools.version>7.8.0.Final</drools.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <drools.version>7.16.0-SNAPSHOT</drools.version>
     </properties>
 
     <dependencies>
